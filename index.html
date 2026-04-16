@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aman Shandilya — AI & Data Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --accent: #7c6af7;
+    --accent2: #4ecdc4;
+    --accent3: #ff6b6b;
+    --text: #e8e8f0;
+    --muted: #8888a8;
+    --border: rgba(124,106,247,0.2);
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ─── GRID BACKGROUND ─── */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,106,247,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,106,247,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.2rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .nav-logo span { color: var(--text); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent2); }
+
+  /* ─── SECTIONS ─── */
+  section { position: relative; z-index: 1; }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 7rem 2.5rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .hero-inner { max-width: 780px; }
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+  h1.hero-name {
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+  }
+  h1.hero-name .line1 { color: var(--text); }
+  h1.hero-name .line2 {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--accent);
+  }
+  .hero-desc {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 500px;
+    margin: 1.5rem 0 2.5rem;
+    line-height: 1.8;
+  }
+  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    padding: 0.75rem 2rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: #9985ff; transform: translateY(-2px); }
+  .btn-outline {
+    padding: 0.75rem 2rem;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, transform 0.15s;
+  }
+  .btn-outline:hover { border-color: var(--accent2); color: var(--accent2); transform: translateY(-2px); }
+
+  .hero-stat-row {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 3.5rem;
+    flex-wrap: wrap;
+  }
+  .hero-stat { border-left: 2px solid var(--accent); padding-left: 1rem; }
+  .hero-stat .num {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .hero-stat .label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 0.2rem;
+  }
+
+  /* ─── SECTION COMMON ─── */
+  .section-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 6rem 2.5rem;
+  }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  h2.section-title {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 3rem;
+    line-height: 1.1;
+  }
+
+  /* ─── ABOUT ─── */
+  #about { background: var(--bg2); }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .about-text p { color: var(--muted); line-height: 1.9; margin-bottom: 1.2rem; }
+  .about-text p strong { color: var(--text); }
+  .about-card-stack { display: flex; flex-direction: column; gap: 1rem; }
+  .info-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .info-card .icon {
+    width: 36px; height: 36px;
+    background: rgba(124,106,247,0.12);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .info-card .info-label { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .info-card .info-val { font-size: 0.95rem; color: var(--text); font-weight: 600; margin-top: 0.2rem; }
+
+  /* ─── SKILLS ─── */
+  #skills { background: var(--bg); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+  .skill-pill {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    text-align: center;
+    transition: border-color 0.2s, color 0.2s, transform 0.15s;
+    cursor: default;
+  }
+  .skill-pill:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-3px); }
+  .skill-pill.accent2:hover { border-color: var(--accent2); color: var(--accent2); }
+  .skill-pill.accent3:hover { border-color: var(--accent3); color: var(--accent3); }
+
+  /* ─── EXPERIENCE ─── */
+  #experience { background: var(--bg2); }
+  .timeline { position: relative; padding-left: 2rem; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .timeline-item:last-child { border-bottom: none; margin-bottom: 0; }
+  .timeline-dot {
+    position: absolute;
+    left: -2.5rem;
+    top: 0.3rem;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px rgba(124,106,247,0.5);
+  }
+  .timeline-meta {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .timeline-title { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.2rem; }
+  .timeline-org { font-size: 0.9rem; color: var(--muted); margin-bottom: 0.8rem; }
+  .timeline-desc { color: var(--muted); font-size: 0.95rem; line-height: 1.8; }
+
+  /* ─── PROJECTS ─── */
+  #projects { background: var(--bg); }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+  }
+  .project-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .project-card:hover { border-color: rgba(124,106,247,0.4); transform: translateY(-4px); }
+  .project-card:hover::before { opacity: 1; }
+  .project-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+  }
+  .project-title { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.8rem; line-height: 1.3; }
+  .project-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.8; margin-bottom: 1.5rem; }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 0.3rem 0.75rem;
+    border-radius: 3px;
+    background: rgba(124,106,247,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(124,106,247,0.2);
+  }
+  .tag.teal { background: rgba(78,205,196,0.1); color: var(--accent2); border-color: rgba(78,205,196,0.2); }
+  .tag.coral { background: rgba(255,107,107,0.1); color: var(--accent3); border-color: rgba(255,107,107,0.2); }
+  .project-link {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent2);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+  }
+  .project-link::after { content: '→'; transition: transform 0.2s; }
+  .project-link:hover { color: var(--text); }
+  .project-link:hover::after { transform: translateX(4px); }
+  .featured-badge {
+    position: absolute;
+    top: 1.5rem; right: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    background: rgba(124,106,247,0.15);
+    border: 1px solid rgba(124,106,247,0.3);
+    border-radius: 3px;
+    color: var(--accent);
+  }
+
+  /* ─── CONTACT ─── */
+  #contact { background: var(--bg2); }
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  .contact-info h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
+  .contact-info p { color: var(--muted); line-height: 1.8; margin-bottom: 2rem; }
+  .contact-links { display: flex; flex-direction: column; gap: 0.75rem; }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .contact-link:hover { color: var(--accent2); }
+  .contact-link .ci {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  /* ─── FORM ─── */
+  form#contact-form { display: flex; flex-direction: column; gap: 1rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+    appearance: none;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus { border-color: var(--accent); }
+  .form-group textarea { min-height: 120px; }
+  .form-group select option { background: var(--bg3); color: var(--text); }
+  .form-submit {
+    padding: 0.9rem 2.5rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .form-submit:hover { background: #9985ff; transform: translateY(-2px); }
+  .form-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  #form-status {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    display: none;
+  }
+  #form-status.success { background: rgba(78,205,196,0.1); border: 1px solid rgba(78,205,196,0.2); color: var(--accent2); }
+  #form-status.error { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.2); color: var(--accent3); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 2.5rem;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up { animation: fadeUp 0.7s ease both; }
+  .fade-up:nth-child(2) { animation-delay: 0.1s; }
+  .fade-up:nth-child(3) { animation-delay: 0.2s; }
+  .fade-up:nth-child(4) { animation-delay: 0.3s; }
+  .fade-up:nth-child(5) { animation-delay: 0.4s; }
+
+  @keyframes cursor-blink { 50% { opacity: 0; } }
+  .cursor {
+    display: inline-block;
+    width: 3px; height: 0.8em;
+    background: var(--accent);
+    vertical-align: middle;
+    margin-left: 4px;
+    animation: cursor-blink 1s step-end infinite;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .about-grid, .contact-layout { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .projects-grid { grid-template-columns: 1fr; }
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { gap: 1rem; }
+    .section-wrapper { padding: 4rem 1.5rem; }
+    #hero { padding: 6rem 1.5rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-logo"><span>aman</span>.dev</div>
+  <ul class="nav-links">
+    <li><a href="#about">about</a></li>
+    <li><a href="#skills">skills</a></li>
+    <li><a href="#projects">projects</a></li>
+    <li><a href="#experience">exp</a></li>
+    <li><a href="#contact">contact</a></li>
+  </ul>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-tag fade-up">Based in Mumbai, India</div>
+    <h1 class="hero-name fade-up">
+      <span class="line1">Aman</span><br>
+      <span class="line2">Shandilya</span>
+    </h1>
+    <p class="hero-desc fade-up">
+      AI &amp; Data Science professional building intelligent systems.
+      Passionate about <strong style="color:var(--accent2)">machine learning</strong>,
+      <strong style="color:var(--accent)">generative AI</strong>, and
+      real-world problem solving.<span class="cursor"></span>
+    </p>
+    <div class="hero-ctas fade-up">
+      <a href="#projects" class="btn-primary">View Projects</a>
+      <a href="https://github.com/Aman678317/shandilya.git" target="_blank" class="btn-outline">GitHub</a>
+      <a href="#contact" class="btn-outline">Contact Me</a>
+    </div>
+    <div class="hero-stat-row fade-up">
+      <div class="hero-stat"><div class="num">2+</div><div class="label">Years Learning AI</div></div>
+      <div class="hero-stat"><div class="num">10+</div><div class="label">Skills & Tools</div></div>
+      <div class="hero-stat"><div class="num">2</div><div class="label">Projects Built</div></div>
+      <div class="hero-stat"><div class="num">🥇</div><div class="label">District Javelin</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ABOUT ─── -->
+<section id="about">
+  <div class="section-wrapper">
+    <div class="section-label">About Me</div>
+    <h2 class="section-title">Who I Am</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>I'm <strong>Aman Shandilya</strong>, an aspiring AI &amp; Data Science professional currently pursuing my <strong>Bachelor of Management Studies (BMS)</strong> at SIES College, Mumbai.</p>
+        <p>Currently interning at <strong>Ethra AI</strong>, I apply Python, machine learning, and data analysis to real-world tasks — from data processing and model building to solving complex AI challenges.</p>
+        <p>I'm certified in <strong>Generative AI, NLP, Machine Learning, SQL, Power BI, SAS</strong>, and more. My goal is to build AI solutions that solve meaningful problems at scale.</p>
+        <p>Beyond tech, I'm a <strong>District-Level Javelin Throw Gold Medalist</strong> and volleyball player — sports have shaped my discipline, teamwork, and competitive mindset.</p>
+        <a href="mailto:shandilyaprahald@gmail.com" class="btn-primary" style="margin-top:1rem; display:inline-block;">Get in Touch</a>
+      </div>
+      <div class="about-card-stack">
+        <div class="info-card">
+          <div class="icon">📍</div>
+          <div>
+            <div class="info-label">Location</div>
+            <div class="info-val">Mumbai, Maharashtra, India</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="icon">🎓</div>
+          <div>
+            <div class="info-label">Education</div>
+            <div class="info-val">BMS (Commerce) — SIES College, 2025–2028</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="icon">💼</div>
+          <div>
+            <div class="info-label">Current Role</div>
+            <div class="info-val">AI & Data Science Intern @ Ethra AI</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="icon">📧</div>
+          <div>
+            <div class="info-label">Email</div>
+            <div class="info-val">shandilyaprahald@gmail.com</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="icon">📞</div>
+          <div>
+            <div class="info-label">Phone</div>
+            <div class="info-val">+91 8521027649</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="icon">🐙</div>
+          <div>
+            <div class="info-label">GitHub</div>
+            <div class="info-val"><a href="https://github.com/Aman678317/shandilya.git" target="_blank" style="color:var(--accent); text-decoration:none;">Aman678317/shandilya</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SKILLS ─── -->
+<section id="skills">
+  <div class="section-wrapper">
+    <div class="section-label">Technical Skills</div>
+    <h2 class="section-title">What I Work With</h2>
+    <div class="skills-grid">
+      <div class="skill-pill">Python</div>
+      <div class="skill-pill accent2">Machine Learning</div>
+      <div class="skill-pill">Generative AI Tools</div>
+      <div class="skill-pill accent2">NLP</div>
+      <div class="skill-pill accent3">LLM Evaluation</div>
+      <div class="skill-pill">AI Image Generation</div>
+      <div class="skill-pill accent2">MySQL</div>
+      <div class="skill-pill">Power BI</div>
+      <div class="skill-pill accent3">RPA</div>
+      <div class="skill-pill">MS-Excel</div>
+      <div class="skill-pill accent2">SAS</div>
+      <div class="skill-pill">Prompt Engineering</div>
+      <div class="skill-pill accent3">ChatGPT / DALL·E</div>
+      <div class="skill-pill accent2">Data Analysis</div>
+      <div class="skill-pill">No-Code AI Workflows</div>
+      <div class="skill-pill accent3">WebRTC</div>
+      <div class="skill-pill">Speech Recognition</div>
+      <div class="skill-pill accent2">React / JavaScript</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROJECTS ─── -->
+<section id="projects">
+  <div class="section-wrapper">
+    <div class="section-label">Projects</div>
+    <h2 class="section-title">Things I've Built</h2>
+    <div class="projects-grid">
+
+      <!-- TalkBridge -->
+      <div class="project-card">
+        <span class="featured-badge">Featured</span>
+        <div class="project-num">01 / 2026</div>
+        <div class="project-title">TalkBridge — Real-Time AI Translation Calling</div>
+        <div class="project-desc">
+          A peer-to-peer calling platform with real-time AI-powered multilingual translation. Users speak in their native language and the other party hears a translated version — live, with captions. Built with WebRTC for low-latency audio, Supabase for signaling &amp; auth, and the Web Speech API for speech-to-text and TTS.
+        </div>
+        <div class="project-tags">
+          <span class="tag">WebRTC</span>
+          <span class="tag teal">Supabase</span>
+          <span class="tag teal">React</span>
+          <span class="tag">Speech API</span>
+          <span class="tag coral">AI Translation</span>
+          <span class="tag">TypeScript</span>
+        </div>
+        <a href="https://github.com/Aman678317/shandilya.git" target="_blank" class="project-link">View on GitHub</a>
+      </div>
+
+      <!-- AI Multilingual Calling -->
+      <div class="project-card">
+        <div class="project-num">02 / 2025</div>
+        <div class="project-title">AI Real-Time Multilingual Video Calling with Lip Sync</div>
+        <div class="project-desc">
+          An AI-based video calling platform inspired by Zoom, enabling real-time multilingual communication. Integrated speech recognition, machine translation, and text-to-speech to convert languages (Hindi → Japanese, English, etc.). Includes a conceptual design for AI lip-syncing to match translated speech with facial movements.
+        </div>
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag teal">Speech Recognition</span>
+          <span class="tag coral">Lip Sync AI</span>
+          <span class="tag">ML Translation</span>
+          <span class="tag">TTS</span>
+        </div>
+        <a href="https://github.com/Aman678317/shandilya.git" target="_blank" class="project-link">View on GitHub</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── EXPERIENCE ─── -->
+<section id="experience">
+  <div class="section-wrapper">
+    <div class="section-label">Experience & Education</div>
+    <h2 class="section-title">My Journey</h2>
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-meta">Feb 2026 — Present</div>
+        <div class="timeline-title">AI & Data Science Intern</div>
+        <div class="timeline-org">Ethra AI · Virtual</div>
+        <div class="timeline-desc">Applying Python, ML, and data analysis to real-world tasks. Assisting in data processing, basic model building, and problem solving. Learning industry tools and improving communication and teamwork skills while meeting project deadlines.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:var(--accent2); box-shadow:0 0 10px rgba(78,205,196,0.5)"></div>
+        <div class="timeline-meta" style="color:var(--accent)">Dec 2025</div>
+        <div class="timeline-title">Generative AI Mastermind — Certification</div>
+        <div class="timeline-org">Outskill · Online</div>
+        <div class="timeline-desc">Completed intensive training on Generative AI fundamentals. Hands-on with ChatGPT, DALL·E, and AI content generation. Built automated no-code workflows for content creation, posting, and data handling. Focused on prompt engineering and AI optimization for business &amp; marketing.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:var(--accent3); box-shadow:0 0 10px rgba(255,107,107,0.5)"></div>
+        <div class="timeline-meta" style="color:var(--accent)">Feb 2026 — Present</div>
+        <div class="timeline-title">AI & Data Science Training</div>
+        <div class="timeline-org">Ethra AI · Virtual</div>
+        <div class="timeline-desc">Ongoing training in AI, Data Science, and Python. Gaining hands-on experience in problem solving, machine learning basics, and communication skills. Quick learner with a practical approach to real-world challenges.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-meta" style="color:var(--accent)">2025 — 2028</div>
+        <div class="timeline-title">Bachelor of Management Studies (BMS), Commerce</div>
+        <div class="timeline-org">SIES College Of Arts, Science & Commerce · Mumbai</div>
+        <div class="timeline-desc">Pursuing a commerce-focused BMS degree while actively building skills in AI, data science, and software development. Combining business acumen with technical expertise.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:var(--accent2)"></div>
+        <div class="timeline-meta" style="color:var(--accent)">2025</div>
+        <div class="timeline-title">Senior Secondary (XII), CBSE — 75%</div>
+        <div class="timeline-org">Tilak Public School · Thane</div>
+        <div class="timeline-desc">Commerce stream. District-Level Javelin Throw Gold Medal Winner. District-Level Volleyball Player – 3rd Place. Developed discipline, teamwork, and leadership through competitive sports.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTACT ─── -->
+<section id="contact">
+  <div class="section-wrapper">
+    <div class="section-label">Contact</div>
+    <h2 class="section-title">Let's Connect</h2>
+    <div class="contact-layout">
+      <div class="contact-info">
+        <h3>Open to opportunities</h3>
+        <p>I'm actively looking for AI/ML internships, data science roles, and collaboration on interesting projects. Whether you have a role, a project idea, or just want to talk AI — reach out!</p>
+        <div class="contact-links">
+          <a href="mailto:shandilyaprahald@gmail.com" class="contact-link">
+            <span class="ci">✉</span> shandilyaprahald@gmail.com
+          </a>
+          <a href="tel:+918521027649" class="contact-link">
+            <span class="ci">📞</span> +91 8521027649
+          </a>
+          <a href="https://github.com/Aman678317/shandilya.git" target="_blank" class="contact-link">
+            <span class="ci">🐙</span> github.com/Aman678317
+          </a>
+          <a class="contact-link">
+            <span class="ci">📍</span> Mumbai, Maharashtra, India
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <form id="contact-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Your Name</label>
+              <input type="text" id="name" name="name" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="john@example.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <select id="subject" name="subject">
+              <option value="">Select a subject...</option>
+              <option>Job / Internship Opportunity</option>
+              <option>Project Collaboration</option>
+              <option>Freelance Work</option>
+              <option>General Inquiry</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Tell me about the opportunity or your project idea..." required></textarea>
+          </div>
+          <div id="form-status"></div>
+          <button type="submit" class="form-submit" id="submit-btn">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <p>Designed & built by <a href="#hero">Aman Shandilya</a> · Mumbai, India · 2025</p>
+  <p style="margin-top:0.5rem; opacity:0.5">shandilyaprahald@gmail.com · +91 8521027649</p>
+</footer>
+
+<script>
+  // ─── CONTACT FORM ───
+  const form = document.getElementById('contact-form');
+  const statusEl = document.getElementById('form-status');
+  const submitBtn = document.getElementById('submit-btn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    statusEl.style.display = 'none';
+
+    const data = {
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      subject: document.getElementById('subject').value,
+      message: document.getElementById('message').value,
+    };
+
+    // Using Formspree endpoint — replace with your own or use a backend
+    // To use: create a free account at formspree.io, get your endpoint
+    const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xpwzzqbd'; // placeholder
+
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (res.ok) {
+        statusEl.textContent = '✓ Message sent! I\'ll get back to you soon.';
+        statusEl.className = 'success';
+        statusEl.style.display = 'block';
+        form.reset();
+      } else {
+        throw new Error('Server error');
+      }
+    } catch (err) {
+      // Graceful offline fallback — show email link
+      statusEl.innerHTML = '✗ Could not send. Please email me directly at <a href="mailto:shandilyaprahald@gmail.com" style="color:var(--accent3)">shandilyaprahald@gmail.com</a>';
+      statusEl.className = 'error';
+      statusEl.style.display = 'block';
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Send Message';
+  });
+
+  // ─── SCROLL REVEAL ───
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.project-card, .timeline-item, .skill-pill, .info-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
